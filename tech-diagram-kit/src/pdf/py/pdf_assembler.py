@@ -446,7 +446,9 @@ def main():
                 dpi=item.get('dpi', 200)
             )
         elif kind == 'table':
-            builder.add_table(item['data'], [w*cm for w in item.get('colWidths', [])])
+            cw = item.get('colWidths', [])
+            col_widths = [w*cm for w in cw] if cw else None
+            builder.add_table(item['data'], col_widths)
 
     builder.build()
 
