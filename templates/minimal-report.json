@@ -1,0 +1,21 @@
+{
+  "context": "AI芯片光互连技术速览",
+  "struct": [
+    { "type": "heading", "text": "核心观点", "level": 1 },
+    { "type": "paragraph", "text": "光互连是突破电互连带宽瓶颈的关键技术，CPO（共封装光学）预计2027年规模部署。" },
+    { "type": "diagram", "ref": "fig1", "layout": "fullwidth", "caption": "光模块工作原理" }
+  ],
+  "desc": [
+    {
+      "id": "fig1",
+      "domain": "cs",
+      "chartType": "flowchart",
+      "layout": "fullwidth",
+      "input": {
+        "dsl": "flowchart LR\nA[电信号] --> B[激光器] --> C[光纤] --> D[探测器] --> E[电信号]"
+      },
+      "caption": "光模块光电转换流程"
+    }
+  ],
+  "outputPath": "reports/minimal_report.pdf"
+}

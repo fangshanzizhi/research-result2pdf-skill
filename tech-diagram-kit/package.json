@@ -1,0 +1,29 @@
+{
+  "name": "tech-diagram-kit",
+  "version": "1.0.0",
+  "description": "Cross-domain technical diagram rendering toolkit for AI research reports",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node test/runner.js",
+    "check-deps": "node src/core/dependency-check.js",
+    "example:all": "node docs/examples/run-all.js"
+  },
+  "keywords": ["diagram", "mermaid", "graphviz", "matplotlib", "latex", "pdf", "ai", "research"],
+  "author": "Kimi CLI Agent",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "mathjax-node": "^2.1.1",
+    "mathjax-node-cli": "^1.0.1",
+    "puppeteer": "^22.0.0",
+    "vega": "^5.28.0",
+    "vega-lite": "^5.16.0",
+    "canvas": "^2.11.2"
+  },
+  "devDependencies": {},
+  "optionalDependencies": {
+    "@mermaid-js/mermaid-cli": "^10.8.0"
+  }
+}

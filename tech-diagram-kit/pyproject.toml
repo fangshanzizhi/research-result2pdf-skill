@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tech-diagram-kit-py"
+version = "1.0.0"
+description = "Python renderers for tech-diagram-kit"
+requires-python = ">=3.9"
+dependencies = [
+    "matplotlib>=3.8.0",
+    "numpy>=1.24.0",
+    "schemdraw>=0.15.0",
+    "pillow>=10.0.0",
+]
+
+[project.optional-dependencies]
+chemistry = ["rdkit>=2023.9.0"]
+pdf = ["reportlab>=4.0.0", "svglib>=1.5.0", "pymupdf>=1.23.0"]
+all = ["rdkit>=2023.9.0", "reportlab>=4.0.0", "svglib>=1.5.0", "pymupdf>=1.23.0"]
+
+[tool.setuptools]
+py-modules = []

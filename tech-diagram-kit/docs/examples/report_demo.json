@@ -1,0 +1,41 @@
+{
+  "title": "AI芯片交换技术深度研究报告",
+  "content": [
+    { "type": "cover", "title": "AI芯片交换技术深度研究报告", "subtitle": "推理芯片与边缘端侧芯片交换/互连技术四层穿透分析" },
+
+    { "type": "heading", "text": "执行摘要", "level": 1 },
+    { "type": "summary", "text": "AI芯片的交换/互连技术呈现<strong>云-边两极分化</strong>的鲜明格局。云端推理芯片以高带宽、低延迟、大规模扩展为核心诉求，形成了 NVLink + InfiniBand/RoCE 的技术栈。边缘端侧芯片则以超低功耗、高集成度、成本敏感为核心约束。" },
+
+    { "type": "heading", "text": "第一部分: 光模块深度研究", "level": 1 },
+    { "type": "heading", "text": "一、技术知识层", "level": 2 },
+    { "type": "paragraph", "text": "光模块是光纤通信系统中实现电信号与光信号互相转换的核心光电子器件。核心成本构成: 光器件占光模块成本约 73%，其中 TOSA + ROSA 占光器件成本的 80%，光芯片占 TOSA/ROSA 成本的 85%。" },
+
+    { "type": "heading", "text": "二、物理公式", "level": 2 },
+    { "type": "paragraph", "text": "光纤链路功率预算是光通信系统设计的核心数学基础。" },
+    { "type": "diagram", "domain": "physics", "chartType": "formula", "input": {"latex": "P_{out} = P_{in} \\cdot 10^{\\alpha L / 10}"}, "layout": "inline", "caption": "光纤链路功率衰减公式" },
+
+    { "type": "paragraph", "text": "其中 P_in 为入射光功率，P_out 为输出光功率，α 为衰减系数 (dB/km)，L 为光纤长度 (km)。" },
+
+    { "type": "heading", "text": "三、NoC 片上网络架构", "level": 2 },
+    { "type": "paragraph", "text": "边缘 AI SoC 采用 Mesh NoC 拓扑，每个路由器连接周边的 IP 模块。相比云端，边缘互连的核心约束是功耗（<1W/芯片）而非带宽。" },
+    { "type": "diagram", "domain": "chip", "chartType": "noc", "input": {"meshSize": 4}, "layout": "fullwidth", "caption": "4x4 Mesh NoC 架构示意图" },
+
+    { "type": "heading", "text": "四、神经网络架构", "level": 2 },
+    { "type": "paragraph", "text": "现代 AI 加速器采用深层神经网络结构，以下是一个典型的多层感知机示意图。" },
+    { "type": "diagram", "domain": "ai", "chartType": "neuralnet", "input": {"layers": [5, 8, 6, 3], "title": "多层感知机架构"}, "layout": "standalone", "caption": "多层感知机 (MLP) 架构图" },
+
+    { "type": "heading", "text": "五、训练曲线", "level": 2 },
+    { "type": "paragraph", "text": "模型训练过程中，损失函数随 epoch 的变化曲线如下。" },
+    { "type": "diagram", "domain": "ai", "chartType": "trainingcurve", "input": {"epochs": [1,2,3,4,5,6,7,8,9,10], "trainLoss": [1.0,0.75,0.55,0.40,0.30,0.22,0.18,0.15,0.13,0.12], "valLoss": [1.05,0.82,0.62,0.48,0.38,0.32,0.28,0.26,0.25,0.24], "title": "ResNet-50 Training Curve"}, "layout": "fullwidth", "caption": "ResNet-50 训练/验证损失曲线" },
+
+    { "type": "heading", "text": "六、数据分析", "level": 2 },
+    { "type": "paragraph", "text": "各季度营收数据对比。" },
+    { "type": "diagram", "domain": "general", "chartType": "chart", "input": {"chartType": "bar", "labels": ["Q1", "Q2", "Q3", "Q4"], "values": [120, 190, 150, 220]}, "layout": "halfwidth", "caption": "2025年季度营收对比" },
+
+    { "type": "heading", "text": "七、关键发现", "level": 2 },
+    { "type": "bullet", "text": "NVIDIA 垂直整合垄断云端 AI 互连市场" },
+    { "type": "bullet", "text": "UALink 开放联盟正在挑战 NVLink 的专有地位" },
+    { "type": "bullet", "text": "CPO 将在 2027 年后开启规模化商用" },
+    { "type": "bullet", "text": "边缘 SoC 全面转向 NoC 架构" }
+  ]
+}

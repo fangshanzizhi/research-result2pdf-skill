@@ -1,0 +1,30 @@
+# Node.js
+node_modules/
+package-lock.json
+npm-debug.log*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.env
+.venv/
+
+# 临时文件
+*.tmp
+*.log
+
+# 输出目录
+reports/*.pdf
+output/
+temp/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

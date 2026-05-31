@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+
+# Temporary files
+temp/*
+!temp/.gitignore
+
+# Output files (generated diagrams)
+output/*
+!output/.gitignore
+
+# Test fixtures (generated during test runs)
+test/fixtures/*
+!test/fixtures/.gitignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

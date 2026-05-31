@@ -1,0 +1,91 @@
+{
+  "_comment": "本文件是 pdf-reporter skill 的完整输入示例。Agent 生成研报时，参照此结构组装 context/struct/desc 三部分内容。",
+  "context": "PCB-光模块-GPU 产业链与技术关联深度研究报告",
+
+  "struct": [
+    { "type": "cover", "title": "PCB-光模块-GPU 产业链与技术关联深度研究报告", "subtitle": "从硅基互联到光电融合的算力基础设施全景分析" },
+
+    { "type": "heading", "text": "执行摘要", "level": 1 },
+    { "type": "summary", "text": "AI 算力爆发正在重塑底层硬件产业链。PCB 承载信号传输，光模块突破带宽瓶颈，GPU 提供算力核心。三者形成'基板-互联-计算'的协同演进格局。" },
+
+    { "type": "heading", "text": "第一部分：PCB 产业链", "level": 1 },
+    { "type": "heading", "text": "一、PCB 产业链全景", "level": 2 },
+    { "type": "paragraph", "text": "PCB（印制电路板）是电子元器件电气连接的载体，按层数可分为单面板、双面板和多层板。AI 服务器 PCB 价值量约为普通服务器的 5-8 倍，主要来自 GPU 基板、交换板、背板等高多层板需求。" },
+    { "type": "diagram", "ref": "fig_pcb_chain", "layout": "fullwidth", "caption": "PCB 产业链全景图" },
+
+    { "type": "heading", "text": "二、关键企业竞争格局", "level": 2 },
+    { "type": "table", "data": [
+      ["企业", "主营产品", "AI 相关营收占比", "技术壁垒"],
+      ["鹏鼎控股", "FPC/HDI", "25%", "苹果供应链核心"],
+      ["东山精密", "FPC/PCB", "30%", "特斯拉/英伟达双认证"],
+      ["深南电路", "高多层PCB", "40%", "封装基板技术领先"],
+      ["沪电股份", "服务器PCB", "50%", "AI 服务器核心供应商"]
+    ], "colWidths": [80, 100, 100, 120] },
+
+    { "type": "heading", "text": "第二部分：光模块产业链", "level": 1 },
+    { "type": "heading", "text": "三、光模块技术原理", "level": 2 },
+    { "type": "paragraph", "text": "光模块是光电信号转换的核心器件。发送端通过激光器将电信号转换为光信号，经光纤传输后，接收端通过光电探测器将光信号还原为电信号。" },
+    { "type": "diagram", "ref": "fig_optical_formula", "layout": "inline", "caption": "光纤链路功率衰减公式" },
+
+    { "type": "heading", "text": "第三部分：GPU 芯片架构", "level": 1 },
+    { "type": "diagram", "ref": "fig_gpu_arch", "layout": "standalone", "caption": "GPU 内部计算架构示意图" },
+
+    { "type": "heading", "text": "第四部分：三者关联分析", "level": 1 },
+    { "type": "paragraph", "text": "PCB、光模块、GPU 三者形成算力基础设施的'铁三角'：" },
+    { "type": "bullet", "text": "PCB 决定信号完整性和传输密度，是系统的'神经系统'" },
+    { "type": "bullet", "text": "光模块突破电互连的带宽-距离瓶颈，是系统的'高速公路'" },
+    { "type": "bullet", "text": "GPU 提供并行计算能力，是系统的'大脑'" },
+    { "type": "diagram", "ref": "fig_system_arch", "layout": "fullwidth", "caption": "系统级关联架构图" },
+
+    { "type": "heading", "text": "关键结论", "level": 1 },
+    { "type": "bullet", "text": "GPU 算力每 2 年翻一番，驱动 PCB 层数和光模块速率同步迭代" },
+    { "type": "bullet", "text": "CPO 技术将光引擎与交换芯片共封装，预计 2027 年规模部署" },
+    { "type": "bullet", "text": "国内企业在 PCB 和光模块领域具备全球竞争力，GPU 仍依赖进口" }
+  ],
+
+  "desc": [
+    {
+      "id": "fig_pcb_chain",
+      "domain": "cs",
+      "chartType": "flowchart",
+      "layout": "fullwidth",
+      "input": {
+        "dsl": "flowchart LR\n  subgraph 上游\n    A1[铜箔]\n    A2[树脂]\n    A3[玻纤布]\n  end\n  B[覆铜板 CCL]\n  C[PCB 制造]\n  subgraph 下游\n    D1[通信设备]\n    D2[服务器]\n    D3[汽车电子]\n    D4[消费电子]\n  end\n  A1 --> B\n  A2 --> B\n  A3 --> B\n  B --> C\n  C --> D1\n  C --> D2\n  C --> D3\n  C --> D4"
+      },
+      "caption": "PCB 产业链全景图"
+    },
+    {
+      "id": "fig_optical_formula",
+      "domain": "math",
+      "chartType": "formula",
+      "layout": "inline",
+      "input": {
+        "latex": "P_{out} = P_{in} \\cdot 10^{-\\alpha L / 10}"
+      },
+      "caption": "光纤链路功率衰减公式"
+    },
+    {
+      "id": "fig_gpu_arch",
+      "domain": "ai",
+      "chartType": "neuralnet",
+      "layout": "standalone",
+      "input": {
+        "layers": [8, 16, 12, 6, 3],
+        "title": "GPU 计算单元层级架构"
+      },
+      "caption": "GPU 内部计算架构示意图"
+    },
+    {
+      "id": "fig_system_arch",
+      "domain": "cs",
+      "chartType": "architecture",
+      "layout": "fullwidth",
+      "input": {
+        "dsl": "graph TD\n  CPU[CPU 控制层] --> PCB1[主板 PCB]\n  PCB1 --> GPU1[GPU 0]\n  PCB1 --> GPU2[GPU 1]\n  GPU1 --> OM1[光模块]\n  GPU2 --> OM2[光模块]\n  OM1 --> SW[交换芯片]\n  OM2 --> SW\n  SW --> OM3[上行光模块]\n  OM3 --> NET[数据中心网络]"
+      },
+      "caption": "系统级关联架构图"
+    }
+  ],
+
+  "outputPath": "reports/pcb_optical_gpu_report.pdf"
+}
