@@ -65,7 +65,7 @@ function checkReady() {
       setupPath,
     };
   }
-  return { ok: true };
+  return { ok: true, pyInfo };
 }
 
 /**
@@ -94,6 +94,7 @@ async function generatePdf(options) {
     throw new Error(ready.error);
   }
 
+  const pyInfo = ready.pyInfo;
   const pyExe = pyInfo.python;
 
   // ── 1. 创建工作目录 ─────────────────────────────────────────────
