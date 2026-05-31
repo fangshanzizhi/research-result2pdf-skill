@@ -64,10 +64,9 @@ const isWin = process.platform === 'win32';
 if (fs.existsSync(targetDir)) {
   log(`Skill already exists at ${targetDir}, updating...`);
   // 删除旧链接/目录
-  const stats = fs.lstatSync(targetDir);
-  if (stats.isSymbolicLink() || stats.is Junction?.call(stats)) {
-    fs.unlinkSync(targetDir);
-  } else {
+  try {
+    fs.unlinkSync(targetDir);  // 先尝试删除（适用于 symlink/junction）
+  } catch {
     fs.rmSync(targetDir, { recursive: true, force: true });
   }
 }
