@@ -40,6 +40,35 @@ function init() {
 }
 
 /**
+ * 检查环境是否就绪，如缺失依赖返回明确的安装指引
+ * @returns {{ok: boolean, error?: string, setupPath?: string}}
+ */
+function checkReady() {
+  const pyInfo = checkPythonEnv();
+  if (!pyInfo.ok) {
+    const setupPath = path.join(__dirname, 'setup.js');
+    return {
+      ok: false,
+      error: `PDF Reporter 依赖未就绪: ${pyInfo.error}\n\n` +
+             `请运行以下命令安装依赖，然后重试:\n` +
+             `  node "${setupPath}"`,
+      setupPath,
+    };
+  }
+  if (pyInfo.missing.length > 0) {
+    const setupPath = path.join(__dirname, 'setup.js');
+    return {
+      ok: false,
+      error: `PDF Reporter 缺少必需的 Python 包: ${pyInfo.missing.join(', ')}\n\n` +
+             `请运行以下命令安装依赖，然后重试:\n` +
+             `  node "${setupPath}"`,
+      setupPath,
+    };
+  }
+  return { ok: true };
+}
+
+/**
  * 生成 PDF 报告
  * @param {object} options
  * @param {string} options.context - 报告主题/标题
@@ -58,13 +87,11 @@ async function generatePdf(options) {
     );
   }
 
-  // ── 0. Python 环境预检 ──────────────────────────────────────────
-  const pyInfo = checkPythonEnv();
-  if (!pyInfo.ok) {
-    throw new Error(`Python 环境检查失败: ${pyInfo.error}`);
-  }
-  if (pyInfo.missing.length > 0) {
-    console.warn('[pdf-reporter] 缺失的 Python 包:', pyInfo.missing.join(', '));
+  // ── 0. 懒加载：检查依赖就绪 ─────────────────────────────────────
+  const ready = checkReady();
+  if (!ready.ok) {
+    console.error('[pdf-reporter] ' + ready.error);
+    throw new Error(ready.error);
   }
 
   const pyExe = pyInfo.python;

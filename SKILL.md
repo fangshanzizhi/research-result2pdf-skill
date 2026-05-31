@@ -14,34 +14,52 @@ user-invocable: true
 
 ## 安装到 Kimi CLI
 
-### 方式一：复制目录（推荐）
+### 一键安装（推荐）
 
 ```bash
-# 从当前仓库复制到 Kimi CLI skills 目录
-cp -r skill/pdf-reporter ~/.kimi-code/skills/pdf-reporter
+git clone https://github.com/fangshanzizhi/research-result2pdf-skill.git
+cd research-result2pdf-skill
+node install.js
 ```
 
-### 方式二：符号链接（开发调试）
+`install.js` 会自动：
+1. 将 skill 链接到 `~/.kimi-code/skills/pdf-reporter/`
+2. 验证安装完整性
+
+**依赖采用懒加载模式**：`setup.js` 不需要在 clone 后手动执行，Agent 首次调用时会自动检测并提示安装。
+
+### 手动安装
 
 ```bash
-ln -s $(pwd)/skill/pdf-reporter ~/.kimi-code/skills/pdf-reporter
+git clone https://github.com/fangshanzizhi/research-result2pdf-skill.git
+cp -r research-result2pdf-skill ~/.kimi-code/skills/pdf-reporter
 ```
-
-### 初始化环境
-
-```bash
-cd ~/.kimi-code/skills/pdf-reporter
-node setup.js
-```
-
-`setup.js` 会自动：
-1. 检测 Python 3.8+ 环境
-2. 安装必需的 Python 包：`reportlab`, `matplotlib`, `numpy`
-3. 安装可选包：`pymupdf`（用于读取页数）
-4. 检查 Tech Diagram Kit (TDK) 目录
-5. 创建 `reports/` 输出目录
 
 ---
+
+## 懒加载依赖安装
+
+Skill 的 Python 依赖（reportlab、matplotlib 等）采用**懒加载**模式：
+
+1. Agent 首次调用 `generatePdf()` 时，自动检测 Python 环境
+2. 如检测到缺失，抛出包含明确安装指令的错误
+3. Agent 收到错误后，自动运行 `node setup.js` 安装依赖
+4. 安装完成后，Agent 重试 `generatePdf()`
+
+**Agent 处理流程**：
+```
+try {
+  await reporter.generatePdf({ context, struct, desc });
+} catch (e) {
+  if (e.message.includes('依赖未就绪')) {
+    // 首次调用，自动安装依赖
+    const { execSync } = require('child_process');
+    execSync('node ~/.kimi-code/skills/pdf-reporter/setup.js', { stdio: 'inherit' });
+    // 重试
+    await reporter.generatePdf({ context, struct, desc });
+  }
+}
+```
 
 ## Agent 调用时机
 

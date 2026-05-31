@@ -11,21 +11,17 @@
 
 ## 快速开始
 
-### 安装到 Kimi CLI
+### 一键安装
 
 ```bash
 git clone https://github.com/fangshanzizhi/research-result2pdf-skill.git
-
-# 方式一：复制到 Kimi skills 目录
-cp -r research-result2pdf-skill ~/.kimi-code/skills/pdf-reporter
-
-# 方式二：符号链接（开发调试）
-ln -s $(pwd)/research-result2pdf-skill ~/.kimi-code/skills/pdf-reporter
-
-# 初始化环境
-cd ~/.kimi-code/skills/pdf-reporter
-node setup.js
+cd research-result2pdf-skill
+node install.js
 ```
+
+`install.js` 会自动将 skill 链接到 `~/.kimi-code/skills/pdf-reporter/`。
+
+**依赖采用懒加载模式**：首次调用时自动检测，缺失则提示 Agent 运行 `node setup.js`。
 
 ### Agent 调用
 
