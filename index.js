@@ -262,35 +262,4 @@ async function generatePdf(options) {
   }
 }
 
-/**
- * CLI 入口 - 用于直接测试
- * 用法: node skill/pdf-reporter/index.js <report.json>
- */
-async function main() {
-  const jsonPath = process.argv[2];
-  if (!jsonPath) {
-    console.error('Usage: node index.js <report.json> [output.pdf]');
-    process.exit(1);
-  }
-
-  const outputPath = process.argv[3];
-  const spec = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
-
-  const result = await generatePdf({
-    context: spec.context || spec.title || '研究报告',
-    struct: spec.struct || spec.content || [],
-    desc: spec.desc || spec.diagrams || [],
-    outputPath,
-  });
-
-  console.log(JSON.stringify(result, null, 2));
-}
-
-if (require.main === module) {
-  main().catch(e => {
-    console.error(e);
-    process.exit(1);
-  });
-}
-
 module.exports = { generatePdf, init };

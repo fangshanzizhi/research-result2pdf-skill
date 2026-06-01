@@ -23,34 +23,23 @@ node install.js
 
 **依赖采用懒加载模式**：首次调用时自动检测，缺失则提示 Agent 运行 `node setup.js`。
 
-### Agent 调用
+### Agent 调用（数据驱动）
+
+Agent **不需要写 JS 文件**，直接组装 `{context, struct, desc}` 三个字段，调用一行 API：
 
 ```javascript
 const reporter = require('skill/pdf-reporter');
 
-// 生成报告
 const result = await reporter.generatePdf({
   context: "AI芯片高速互联技术深度报告",
-  struct: [
-    { type: "heading", text: "执行摘要", level: 1 },
-    { type: "paragraph", text: "光互连是突破电互连带宽瓶颈的关键技术..." },
-    { type: "diagram", ref: "fig1", layout: "fullwidth", caption: "光模块工作流程" },
-    { type: "heading", text: "关键技术", level: 1 },
-    { type: "bullet", text: "CPO技术预计2027年规模部署" },
-  ],
-  desc: [
-    {
-      id: "fig1",
-      domain: "cs",
-      chartType: "flowchart",
-      input: { dsl: "flowchart LR\nA[电信号] --> B[激光器] --> C[光纤] --> D[探测器]" },
-      caption: "光模块工作流程"
-    }
-  ]
+  struct: [ /* 章节结构与图表占位符 */ ],
+  desc: [ /* 图表定义 */ ]
 });
 
 // result = { success: true, path: "reports/2026-05-31_report.pdf", size, pages, images }
 ```
+
+完整的数据格式和图表类型速查表见 `SKILL.md`。
 
 ## 输入结构
 
