@@ -3,7 +3,7 @@ name: tech-diagram-kit
 description: >
   跨领域技术图表渲染工具包。输入任意领域的技术描述，自动生成对应的专业图表。
   支持化学分子、物理公式、数学几何、UML架构、神经网络、网络拓扑、芯片架构、电路图、
-  工艺流程图等 10+ 领域、30+ 图表类型。优先使用 Node.js 渲染器，必要时自动降级到 Python。
+  工艺流程图等 9 大领域、33+ 图表类型。优先使用 Node.js 渲染器，必要时自动降级到 Python。
 user-invocable: true
 ---
 
@@ -23,8 +23,6 @@ user-invocable: true
 ```javascript
 const tdk = require('tech-diagram-kit');
 
-// 根据用户请求的领域选择对应接口
-
 // 化学
 await tdk.chemistry.molecule('CCO', { format: 'png' });
 await tdk.chemistry.reaction('2H_2 + O_2 \\rightarrow 2H_2O');
@@ -32,6 +30,7 @@ await tdk.chemistry.reaction('2H_2 + O_2 \\rightarrow 2H_2O');
 // 物理
 await tdk.physics.formula('\\nabla \\cdot \\vec{E} = \\frac{\\rho}{\\varepsilon_0}');
 await tdk.physics.bandDiagram({ conductionBand: [...], valenceBand: [...] });
+await tdk.physics.circuit({ circuitType: 'basic' });  // basic | opamp | logic
 
 // 数学
 await tdk.math.formula('\\sum_{i=1}^{n} i = \\frac{n(n+1)}{2}');
@@ -103,6 +102,13 @@ await tdk.chip.noc(4);  // 4x4 Mesh NoC
 
 await tdk.chip.circuit({ circuitType: 'basic' });
 
+await tdk.chip.timing({
+  signals: [
+    { name: 'CLK', wave: 'p....' },
+    { name: 'DATA', wave: 'x.===x', data: ['D0','D1','D2'] }
+  ]
+});
+
 // 制造业
 await tdk.manufacturing.process({
   steps: [
@@ -119,7 +125,12 @@ await tdk.manufacturing.spc({
   ucl: 11.5, lcl: 8.5, cl: 10.0
 });
 
-// 通用
+// 通用（可直接使用，无需记忆具体领域）
+await tdk.general.formula('E = mc^2');
+await tdk.general.flowchart('direction: right\nA -> B -> C');
+await tdk.general.architecture('direction: right\nFrontend -> Backend -> DB');
+await tdk.general.network('graph G { A -- B; A -- C; }');
+
 await tdk.general.mindmap(`
 # 技术架构
 ## 前端
@@ -188,9 +199,19 @@ try {
 }
 ```
 
+## 沙盒模式
+
+TDK 默认使用沙盒模式管理依赖，在项目根目录创建 `.pdf-reporter/`：
+
+- `venv/` — Python 虚拟环境（reportlab/matplotlib/numpy/pymupdf/schemdraw/rdkit）
+- `node_modules/` — Node.js 包（mathjax-node/mermaid-cli）
+- `bin/` — CLI 二进制（d2.exe、dot.exe + DLLs）
+
+沙盒自动安装，无需手动配置环境变量。
+
 ## 注意事项
 
 1. **首次使用前**执行 `npm run check-deps` 查看可用渲染器
-2. Python 渲染器通过子进程调用，要求环境变量 `PYTHON` 指向正确 Python 路径
+2. Python 渲染器通过子进程调用，沙盒 Python 路径自动解析
 3. 所有临时文件自动清理，输出文件默认保存到 `output/` 目录
 4. 中文字体使用系统 SimHei，如不存在请安装或设置 `TDK_FONT_PATH` 环境变量

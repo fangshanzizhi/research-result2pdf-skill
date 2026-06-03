@@ -2,7 +2,7 @@
 name: pdf-reporter
 description: >
   自动PDF研究报告生成器。Agent 只需组装 {context, struct, desc} 三个字段的数据结构，
-  Skill 自动渲染图表并组装为专业 A4 PDF。支持 10+ 技术领域、30+ 图表类型，内置中文支持。
+  Skill 自动渲染图表并组装为专业 A4 PDF。支持 9 大技术领域、33+ 图表类型，内置中文支持。
 user-invocable: true
 ---
 
@@ -30,14 +30,16 @@ user-invocable: true
 
 ---
 
-## Agent 工作流（三步）
+## Agent 工作流（四步）
 
 ```
 Step 1: 阅读本 SKILL.md，理解 {context, struct, desc} 的数据格式
    ↓
-Step 2: 基于对话内容，推理并组织三个字段的数据
+Step 2: 基于对话内容，推理并列出需要的图表类型（可调用 listChartTypes）
    ↓
-Step 3: 调用 skill API，拿到 PDF 路径，告知用户
+Step 3: 组装三个字段的数据结构
+   ↓
+Step 4: 调用 skill API，拿到 PDF 路径，告知用户
 ```
 
 ### Step 1: 理解数据格式
@@ -70,7 +72,7 @@ context: "AI芯片高速互联技术深度研究报告"
 **`diagram` 的 `layout` 选项**：
 - `fullwidth` — 占满页面宽度（默认，适合大多数图表）
 - `inline` — 行内小图（适合公式）
-- `halfwidth` — 半宽（两图并排）
+- `half` — 半宽（两图并排）
 - `standalone` — 独占一页（适合复杂架构图）
 
 #### `desc` — 图表描述数组
@@ -80,12 +82,31 @@ context: "AI芯片高速互联技术深度研究报告"
 | 字段 | 说明 | 示例 |
 |------|------|------|
 | `id` | 唯一标识，被 `struct` 中的 `ref` 引用 | `"fig1"` |
-| `domain` | 技术领域：`cs`/`math`/`ai`/`chip`/`physics`/`network`/`general` | `"cs"` |
-| `chartType` | 图表类型 | `"chart"` / `"formula"` / `"neuralnet"` / `"noc"` |
+| `domain` | 技术领域：`general`/`cs`/`math`/`ai`/`chip`/`physics`/`network`/`chemistry`/`manufacturing` | `"general"` |
+| `chartType` | 图表类型 | `"chart"` / `"formula"` / `"neuralnet"` / `"molecule"` |
 | `input` | 图表专用输入参数 | `{ chartType: "bar", labels: [...], values: [...] }` |
 | `caption` | 图注文字 | `"光模块工作流程"` |
 
-### Step 2: 组织数据
+### Step 2: 选择图表类型
+
+Agent 根据报告内容选择合适的图表类型。可直接使用 `general` 领域的通用别名，无需记忆具体领域：
+
+| 需求 | domain | chartType | input 示例 |
+|------|--------|-----------|------------|
+| 柱状图/饼图 | `general` | `chart` | `{ chartType: "bar", labels: [...], values: [...] }` |
+| 流程图 | `general` | `flowchart` | D2 语法字符串或 Mermaid DSL |
+| 架构图 | `general` | `architecture` | D2 语法字符串 |
+| 数学公式 | `general` | `formula` | LaTeX 字符串，如 `"E = mc^2"` |
+| 网络拓扑 | `general` | `network` | Graphviz DOT 字符串 |
+| 工艺流程 | `general` | `process` | D2/Mermaid 语法字符串 |
+| 神经网络 | `ai` | `neuralnet` | `{ layers: [5, 8, 6, 3] }` |
+| 分子结构 | `chemistry` | `molecule` | `{ smiles: "CCO" }` |
+| 电路图 | `physics`/`chip` | `circuit` | 字符串简写（默认 basic）或 `{ circuitType: "opamp" }` |
+| 时序图 | `chip` | `timing` | `{ signals: [...] }` |
+
+> **字符串简写支持**：`formula`、`circuit` 等类型可直接传入字符串，无需包装成对象。
+
+### Step 3: 组织数据
 
 基于对话中的研究内容，Agent 直接组织以下数据结构（**不需要写 JS 文件**）：
 
@@ -119,17 +140,17 @@ const reportData = {
   desc: [
     {
       id: "fig_flow",
-      domain: "cs",
+      domain: "general",
       chartType: "flowchart",
-      input: { dsl: "flowchart LR\nA[电信号] --> B[激光器] --> C[光纤] --> D[探测器] --> E[电信号]" },
+      input: `direction: right\nA: 电信号\nB: 激光器\nC: 光纤\nD: 探测器\nE: 电信号\nA -> B -> C -> D -> E`,
       caption: "光模块光电转换流程"
     },
     {
       id: "fig_formula",
-      domain: "math",
+      domain: "general",
       chartType: "formula",
-      input: { latex: "\\alpha(f) = \\alpha_0 \\sqrt{f} + \\alpha_{diel} f + \\frac{\\alpha_{rad}}{R}" },
-      caption: "传输线损耗模型"
+      input: "E = mc^2",
+      caption: "质能方程"
     },
     {
       id: "fig_noc",
@@ -142,7 +163,7 @@ const reportData = {
 };
 ```
 
-### Step 3: 调用 API
+### Step 4: 调用 API
 
 Agent 直接调用 Skill API（**一行代码**）：
 
@@ -163,29 +184,17 @@ Agent 将 `result.path` 告知用户即可。
 
 ---
 
-## 懒加载依赖安装
+## 沙盒自动安装
 
-Skill 的 Python 依赖（reportlab、matplotlib 等）采用**懒加载**模式：
+Skill 采用**沙盒模式**管理依赖：
 
-1. Agent 首次调用 `generatePdf()` 时，自动检测 Python 环境
-2. 如检测到缺失，抛出包含明确安装指令的错误
-3. Agent 收到错误后，自动运行 `node setup.js` 安装依赖
-4. 安装完成后，Agent 重试 `generatePdf()`
+1. 首次调用 `generatePdf()` 时，自动在项目根目录创建 `.pdf-reporter/` 沙盒
+2. 沙盒内创建 Python venv，自动安装 reportlab/matplotlib/numpy/pymupdf/schemdraw/rdkit
+3. 自动下载并安装 CLI 工具：d2 (GitHub Releases)、graphviz (GitLab Releases)、mermaid-cli (npm)
+4. 所有依赖隔离在沙盒内，不污染系统环境
+5. 安装失败时自动降级，不影响核心功能
 
-**Agent 处理流程**：
-```javascript
-try {
-  await reporter.generatePdf({ context, struct, desc });
-} catch (e) {
-  if (e.message.includes('依赖未就绪') || e.message.includes('缺少')) {
-    // 首次调用，自动安装依赖
-    const { execSync } = require('child_process');
-    execSync('node ~/.kimi-code/skills/pdf-reporter/setup.js', { stdio: 'inherit' });
-    // 重试
-    await reporter.generatePdf({ context, struct, desc });
-  }
-}
-```
+**Agent 无需手动安装任何依赖**，首次调用会自动完成全部初始化。
 
 ---
 
@@ -194,27 +203,6 @@ try {
 Agent 在 `struct` 中放置 `diagram` 占位符，在 `desc` 中定义图表规格。以下每种图表类型均给出 **可直接复制修改的完整模板**。
 
 > 所有模板中：`struct[i]` 是 `diagram` 占位符，`desc[j]` 是对应的图表定义。
-
----
-
-### 流程图 / 架构图
-
-```javascript
-// struct 中的 diagram 占位符
-{ type: "diagram", ref: "fig_flow", layout: "fullwidth", caption: "系统工作流程" }
-
-// desc 中的图表定义
-{
-  id: "fig_flow",
-  domain: "cs",
-  chartType: "flowchart",
-  input: { dsl: "flowchart LR\nA[输入] --> B[处理] --> C[输出]" },
-  caption: "系统工作流程"
-}
-```
-
-> `chartType` 可选：`flowchart` / `architecture` / `uml` / `er` / `statemachine` / `gantt`
-> `dsl` 使用 Mermaid 语法。如 mermaid-cli 未安装，会 fallback 到 d2（如 d2 也未装则渲染失败，占位符处显示文字）。
 
 ---
 
@@ -242,7 +230,41 @@ Agent 在 `struct` 中放置 `diagram` 占位符，在 `desc` 中定义图表规
 
 ---
 
-### LaTeX 公式
+### 流程图（通用）
+
+```javascript
+// struct 中的 diagram 占位符
+{ type: "diagram", ref: "fig_flow", layout: "fullwidth", caption: "系统工作流程" }
+
+// desc 中的图表定义（D2 语法）
+{
+  id: "fig_flow",
+  domain: "general",
+  chartType: "flowchart",
+  input: `direction: right\nA: 输入\nB: 处理\nC: 输出\nA -> B -> C`,
+  caption: "系统工作流程"
+}
+```
+
+> 也可使用 Mermaid 语法。如 mermaid-cli 未安装，会 fallback 到 d2。
+
+---
+
+### 架构图（通用）
+
+```javascript
+{
+  id: "fig_arch",
+  domain: "general",
+  chartType: "architecture",
+  input: `direction: right\nFrontend: Web App\n  Backend: API Gateway\n    Database: PostgreSQL\nFrontend -> Backend\nBackend -> Database`,
+  caption: "系统架构图"
+}
+```
+
+---
+
+### LaTeX 公式（通用）
 
 ```javascript
 // struct 中的 diagram 占位符
@@ -251,14 +273,28 @@ Agent 在 `struct` 中放置 `diagram` 占位符，在 `desc` 中定义图表规
 // desc 中的图表定义
 {
   id: "fig_formula",
-  domain: "math",
+  domain: "general",
   chartType: "formula",
-  input: { latex: "\\alpha(f) = \\alpha_0 \\sqrt{f} + \\alpha_{diel} f + \\frac{\\alpha_{rad}}{R}" },
-  caption: "传输线损耗公式"
+  input: "E = mc^2",        // 字符串简写，无需包裹 $
+  caption: "质能方程"
 }
 ```
 
-> **不要加 `$` 包裹**，直接写 LaTeX 内容。`layout: "inline"` 适合公式（55%宽度）。
+> **字符串简写支持**：直接写 LaTeX 内容即可，不需要加 `$` 包裹。
+
+---
+
+### 网络拓扑（通用）
+
+```javascript
+{
+  id: "fig_net",
+  domain: "general",
+  chartType: "network",
+  input: `graph G {\n  rankdir=LR;\n  A -- B;\n  A -- C;\n  B -- C;\n}`,
+  caption: "网络拓扑"
+}
+```
 
 ---
 
@@ -282,84 +318,47 @@ Agent 在 `struct` 中放置 `diagram` 占位符，在 `desc` 中定义图表规
 
 ---
 
-### 训练曲线
+### 分子结构
 
 ```javascript
-// struct 中的 diagram 占位符
-{ type: "diagram", ref: "fig_train", layout: "fullwidth", caption: "ResNet-50 训练曲线" }
-
-// desc 中的图表定义
 {
-  id: "fig_train",
-  domain: "ai",
-  chartType: "trainingcurve",
-  input: { model: "resnet50", epochs: 90, batch_size: 256 },
-  caption: "ResNet-50 训练曲线"
+  id: "fig_mol",
+  domain: "chemistry",
+  chartType: "molecule",
+  input: { smiles: "CC(=O)Oc1ccccc1C(=O)O" },
+  caption: "阿司匹林分子结构"
 }
 ```
 
 ---
 
-### 热图 / 混淆矩阵
+### 电路图
 
 ```javascript
-// struct 中的 diagram 占位符
-{ type: "diagram", ref: "fig_heat", layout: "inline", caption: "注意力权重热图" }
-
-// desc 中的图表定义
 {
-  id: "fig_heat",
-  domain: "ai",
-  chartType: "heatmap",
-  input: {
-    data: [[0.8, 0.1, 0.1], [0.1, 0.85, 0.05], [0.05, 0.1, 0.85]],
-    labels: ["Class A", "Class B", "Class C"]
-  },
-  caption: "注意力权重热图"
+  id: "fig_circuit",
+  domain: "physics",
+  chartType: "circuit",
+  input: "basic",            // 字符串简写
+  caption: "基础RC电路"
 }
 ```
 
-> `chartType: "confusion"` 用法相同，自动标注百分比。
-
----
-
-### NoC 网络拓扑图
-
-```javascript
-// struct 中的 diagram 占位符
-{ type: "diagram", ref: "fig_noc", layout: "fullwidth", caption: "4x4 Mesh NoC 架构" }
-
-// desc 中的图表定义
-{
-  id: "fig_noc",
-  domain: "chip",
-  chartType: "noc",
-  input: {
-    topology: "mesh",
-    nodes: ["C00", "C01", "C02", "C03", "C10", "C11", "C12", "C13"],
-    size: 4
-  },
-  caption: "4x4 Mesh NoC 架构"
-}
-```
+> 也可使用对象：`{ circuitType: "basic" | "opamp" | "logic" }`
 
 ---
 
 ### 时序图
 
 ```javascript
-// struct 中的 diagram 占位符
-{ type: "diagram", ref: "fig_timing", layout: "fullwidth", caption: "时钟信号时序" }
-
-// desc 中的图表定义
 {
   id: "fig_timing",
   domain: "chip",
   chartType: "timing",
   input: {
     signals: [
-      { name: "CLK", wave: "0101010101" },
-      { name: "DATA", wave: "0.1.0.1.0." }
+      { name: "CLK", wave: "p...." },
+      { name: "DATA", wave: "x.===x", data: ["D0","D1","D2"] }
     ]
   },
   caption: "时钟信号时序"
@@ -426,6 +425,7 @@ Agent 组装数据时，可参考以下模板：
 
 - `templates/minimal-report.json` — 最小示例（封面+摘要+1段文字+1张图）
 - `templates/report-spec.example.json` — 完整研报示例（多章节+多种图表）
+- `reports/generate_full_chart_test.js` — 全图表类型测试（10 种图表完整示例）
 
 ---
 
@@ -442,11 +442,12 @@ node install.js
 ## 注意事项
 
 1. **Agent 不需要写 JS 文件** — 直接组装数据调用 API 即可
-2. **LaTeX 公式不要加 `$` 包裹** — `latex: "E = mc^2"` 即可
+2. **LaTeX 公式不要加 `$` 包裹** — `input: "E = mc^2"` 即可
 3. **图表顺序** — 以 `struct` 中 `ref` 引用的顺序为准
 4. **文字长度** — `paragraph` 建议 200-300 字以内
 5. **每页图表** — 建议不超过 2 张，`standalone` 独占一页
 6. **中文字体** — 使用系统 SimHei，如缺失设置 `TDK_FONT_PATH`
+7. **沙盒初始化** — 首次调用会自动创建 `.pdf-reporter/` 并安装依赖，耗时约 2-5 分钟
 
 ---
 
@@ -455,6 +456,7 @@ node install.js
 | 现象 | 原因 | 解决 |
 |------|------|------|
 | "Python 环境检查失败" | Python 未安装或 < 3.8 | 安装 Python 3.8+，设置 `TDK_PYTHON` |
-| "reportlab 缺失" | Python 包未安装 | 运行 `node setup.js` |
-| 图表渲染失败 | mermaid/d2 CLI 未安装 | 可选依赖，不影响核心功能 |
+| "reportlab 缺失" | 沙盒未初始化 | 首次调用会自动安装，或手动运行 `node setup.js` |
+| 图表渲染失败 | CLI 工具未就绪 | 沙盒会自动下载 d2/graphviz，如失败可手动运行 `node setup.js` |
 | 中文显示为方块 | 系统缺中文字体 | 安装 SimHei 或设 `TDK_FONT_PATH` |
+| rdkit 导入失败 | NumPy 版本不兼容 | 沙盒已自动降级 numpy 到 1.26.4 |
