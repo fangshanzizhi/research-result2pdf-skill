@@ -11,17 +11,44 @@
 
 ## 快速开始
 
-### 一键安装
+### 开箱即用（推荐）
 
 ```bash
 git clone https://github.com/fangshanzizhi/research-result2pdf-skill.git
 cd research-result2pdf-skill
-node install.js
+npm install
 ```
 
-`install.js` 会自动将 skill 链接到 `~/.kimi-code/skills/pdf-reporter/`。
+`npm install` 自动完成全部初始化：
+1. 安装 Node.js 依赖（jest 等）
+2. 将 skill 链接到 `~/.kimi-code/skills/pdf-reporter/`
+3. 创建 `.pdf-reporter/` 沙盒并安装全部 10 个依赖（Python venv + Node 包 + CLI 二进制）
 
-**沙盒依赖管理**：首次调用时自动创建 `.pdf-reporter/` 沙盒，安装所有必需和可选依赖（Python venv + Node.js 包 + CLI 二进制），无需手动配置。
+> 首次初始化约需 **2-5 分钟**（下载 Python 包和 CLI 工具），请耐心等待。后续调用秒开。
+
+### 直接使用
+
+```javascript
+const reporter = require('./index.js');
+// 或安装后通过 skill 路径引用
+const reporter = require('skill/pdf-reporter');
+
+const result = await reporter.generatePdf({
+  context: "研究报告主题",
+  struct: [ /* 章节结构 */ ],
+  desc: [ /* 图表定义 */ ]
+});
+```
+
+### CLI 命令行
+
+```bash
+# 通过 report.json 生成 PDF
+npx pdf-reporter templates/minimal-report.json output.pdf
+
+# 或使用已安装的 skill 路径
+node bin/cli.js templates/minimal-report.json output.pdf
+```
 
 ### Agent 调用（数据驱动）
 

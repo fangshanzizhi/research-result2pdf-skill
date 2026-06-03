@@ -1,8 +1,11 @@
+#!/usr/bin/env node
 /**
  * PDF Reporter Skill - CLI 入口
  * 用于直接测试，通过命令行传入 report.json 生成 PDF
  *
  * 用法:
+ *   pdf-reporter <report.json> [output.pdf]
+ *   npx pdf-reporter <report.json> [output.pdf]
  *   node bin/cli.js <report.json> [output.pdf]
  */
 

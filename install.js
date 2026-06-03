@@ -1,11 +1,16 @@
 /**
  * PDF Reporter Skill - 一键安装脚本
- * 将本 skill 安装到 Kimi CLI 的 skills 目录
+ * 将本 skill 安装到 Kimi CLI 的 skills 目录，并可选自动初始化沙盒
  *
  * 用法:
+ *   node install.js                  # 仅安装 skill 链接（默认）
+ *   node install.js --auto-setup     # 安装链接 + 自动初始化沙盒（npm postinstall 用）
+ *   node install.js --skip-setup     # 仅安装链接，不初始化沙盒
+ *
+ * 开箱即用:
  *   git clone https://github.com/fangshanzizhi/research-result2pdf-skill.git
  *   cd research-result2pdf-skill
- *   node install.js
+ *   npm install    # 自动执行 install.js --auto-setup
  */
 
 const fs = require('fs');
@@ -14,6 +19,10 @@ const { execSync } = require('child_process');
 
 const SKILL_NAME = 'pdf-reporter';
 const SOURCE_DIR = __dirname;
+
+// 命令行参数
+const AUTO_SETUP = process.argv.includes('--auto-setup');
+const SKIP_SETUP = process.argv.includes('--skip-setup');
 
 // 定位 Kimi CLI skills 目录
 function getSkillsDir() {
@@ -42,6 +51,10 @@ function log(msg) {
 
 function ok(msg) {
   console.log(`${C.green}✓${C.reset} ${msg}`);
+}
+
+function warn(msg) {
+  console.log(`${C.yellow}⚠${C.reset} ${msg}`);
 }
 
 // ── 主流程 ──────────────────────────────────────────────────────
@@ -96,10 +109,30 @@ if (fs.existsSync(installedIndex)) {
   process.exit(1);
 }
 
+// 4. 自动初始化沙盒（--auto-setup 模式）
+if (AUTO_SETUP && !SKIP_SETUP) {
+  console.log(`\n${C.bold}${C.cyan}▶ 正在初始化沙盒环境...${C.reset}`);
+  console.log(`  （首次安装需要 2-5 分钟，请耐心等待）\n`);
+  try {
+    execSync('node setup.js', {
+      cwd: SOURCE_DIR,
+      stdio: 'inherit',
+      timeout: 600000,  // 10 分钟超时
+    });
+    ok('沙盒环境初始化完成');
+  } catch (e) {
+    warn(`沙盒初始化失败: ${e.message}`);
+    console.log(`  可稍后手动运行: node setup.js`);
+  }
+}
+
 console.log(`\n${C.bold}安装完成！${C.reset}`);
 console.log(`  Skill 位置: ${targetDir}`);
 console.log(`  使用方式: require('skill/pdf-reporter')`);
-console.log(`\n${C.yellow}注意: 依赖采用懒加载模式，Agent 首次调用时会自动提示安装。${C.reset}`);
+
+if (!AUTO_SETUP) {
+  console.log(`\n${C.yellow}提示: 运行 'npm install' 可自动初始化沙盒环境，或稍后手动运行 'node setup.js'${C.reset}`);
+}
 
 // ── 工具函数 ────────────────────────────────────────────────────
 

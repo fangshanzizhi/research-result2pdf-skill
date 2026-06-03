@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "PDF Reporter Skill - 自动PDF研究报告生成器。Agent 只需组装 {context, struct, desc}，Skill 自动渲染图表并组装为专业 A4 PDF",
   "main": "index.js",
+  "bin": {
+    "pdf-reporter": "./bin/cli.js"
+  },
   "scripts": {
     "test": "jest --coverage",
     "test:unit": "jest test/unit src/unit_test --coverage",
     "test:integration": "jest test/integration --runInBand",
     "setup": "node setup.js",
-    "setup:check": "node setup.js --check-only"
+    "setup:check": "node setup.js --check-only",
+    "postinstall": "node install.js --auto-setup"
   },
   "keywords": [
     "pdf",

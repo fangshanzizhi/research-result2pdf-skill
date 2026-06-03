@@ -150,30 +150,14 @@ function checkOptionalDeps() {
     }
   }
 
-  // Node.js 依赖
+  // Node.js 依赖（仅检查系统全局，沙盒已在上面覆盖）
   const NODE_DEPS = ['mathjax-node'];
   for (const dep of NODE_DEPS) {
     try {
       require.resolve(dep);
-      print(dep, 'OK');
+      print(dep, 'OK', '(system)');
     } catch {
       print(dep, 'WARN', '未安装（math 公式将使用 Python fallback）');
-    }
-  }
-
-  // CLI 工具
-  const CLI_TOOLS = [
-    { name: 'mermaid-cli', check: 'mmdc --version', guide: 'npm install -g @mermaid-js/mermaid-cli' },
-    { name: 'd2', check: 'd2 --version', guide: '见 https://d2lang.com/tour/install' },
-    { name: 'graphviz', check: 'dot -V', guide: '见 https://graphviz.org/download/' },
-  ];
-
-  for (const tool of CLI_TOOLS) {
-    try {
-      execSync(tool.check, { stdio: 'pipe', timeout: 5000 });
-      print(tool.name, 'OK');
-    } catch {
-      print(tool.name, 'WARN', `未安装 → ${tool.guide}`);
     }
   }
 }

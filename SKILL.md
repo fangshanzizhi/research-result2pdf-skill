@@ -434,8 +434,10 @@ Agent 组装数据时，可参考以下模板：
 ```bash
 git clone https://github.com/fangshanzizhi/research-result2pdf-skill.git
 cd research-result2pdf-skill
-node install.js
+npm install    # 一键完成全部初始化（约 2-5 分钟）
 ```
+
+`npm install` 自动完成：skill 链接 + 沙盒创建 + 全部依赖安装。
 
 ---
 
