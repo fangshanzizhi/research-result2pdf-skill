@@ -1,11 +1,33 @@
 /**
- * 依赖可用性检查
+ * 依赖可用性检查（沙盒优先 + 系统回退版）
  * 检查 Node CLI 工具和 Python 包是否已安装
+ * 优先级: 沙盒 > 系统（Tier 0 包优先沙盒；Tier 1+ 包回退系统）
  */
 const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 const { InstallGuide } = require('../utils/errors');
+const { getPython, findInSandbox, getSandboxPython, getSandboxNodeBin, findSystemPython } = require('./sandbox');
 
 function which(cmd) {
+  const isWin = process.platform === 'win32';
+
+  // 1. 优先查找沙盒 node_modules/.bin/
+  const nodeBin = getSandboxNodeBin();
+  const nodePaths = [
+    path.join(nodeBin, cmd + (isWin ? '.exe' : '')),
+    path.join(nodeBin, cmd + (isWin ? '.cmd' : '')),
+    path.join(nodeBin, cmd),
+  ];
+  for (const p of nodePaths) {
+    if (fs.existsSync(p)) return true;
+  }
+
+  // 2. 再查找沙盒 bin/
+  const sandboxPath = findInSandbox(cmd);
+  if (sandboxPath) return true;
+
+  // 3. 最后查找系统 PATH
   try {
     execSync(process.platform === 'win32' ? `where ${cmd}` : `which ${cmd}`, { stdio: 'pipe' });
     return true;
@@ -14,28 +36,26 @@ function which(cmd) {
   }
 }
 
-function findPython() {
-  if (process.env.TDK_PYTHON) return process.env.TDK_PYTHON;
-  if (process.platform === 'win32') {
-    const candidates = [
-      'D:\\ProgramFiles\\Anaconda3\\envs\\fintech2\\python.exe',
-      'C:\\Users\\lenovo\\Anaconda3\\python.exe',
-    ];
-    for (const c of candidates) {
-      try { require('fs').accessSync(c); return c; } catch {}
-    }
-  }
-  return process.platform === 'win32' ? 'python' : 'python3';
-}
-
 function pythonImport(pkg) {
-  try {
-    const py = findPython();
-    execSync(`${py} -c "import ${pkg}"`, { stdio: 'pipe', shell: process.platform === 'win32' });
-    return true;
-  } catch {
-    return false;
+  // 1. 先查沙盒
+  const sandboxPy = getSandboxPython();
+  if (sandboxPy) {
+    try {
+      execSync(`"${sandboxPy}" -c "import ${pkg}"`, { stdio: 'pipe', shell: process.platform === 'win32', timeout: 5000 });
+      return true;
+    } catch { /* 沙盒没有，继续查系统 */ }
   }
+
+  // 2. 回退到系统 Python
+  const sysPy = findSystemPython();
+  if (sysPy) {
+    try {
+      execSync(`"${sysPy}" -c "import ${pkg}"`, { stdio: 'pipe', shell: process.platform === 'win32', timeout: 5000 });
+      return true;
+    } catch { /* ignore */ }
+  }
+
+  return false;
 }
 
 const CHECKERS = {
@@ -44,11 +64,16 @@ const CHECKERS = {
   plantuml:   () => which('plantuml') || which('java'),
   graphviz:   () => which('dot'),
   markmap:    () => which('markmap'),
-  mathjax:    () => { try { require('mathjax-node'); return true; } catch { return false; } },
+  mathjax:    () => {
+    // 先查沙盒 node_modules
+    const localPath = path.join(getSandboxNodeBin(), '..', 'mathjax-node');
+    if (fs.existsSync(localPath)) return true;
+    try { require('mathjax-node'); return true; } catch { return false; }
+  },
   vegalite:   () => { try { require('vega-lite'); return true; } catch { return false; } },
   matplotlib: () => pythonImport('matplotlib'),
-  mpl_diagram:() => pythonImport('matplotlib'),   // 同 matplotlib
-  latex_math: () => pythonImport('matplotlib'),    // 依赖 matplotlib.mathtext
+  mpl_diagram:() => pythonImport('matplotlib'),
+  latex_math: () => pythonImport('matplotlib'),
   rdkit:      () => pythonImport('rdkit'),
   schemdraw:  () => pythonImport('schemdraw'),
   tikz:       () => which('pdflatex'),

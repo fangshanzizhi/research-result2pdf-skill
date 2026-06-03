@@ -1,0 +1,18 @@
+{
+  "context": "图表测试报告",
+  "struct": [
+    { "type": "cover", "title": "图表测试报告", "subtitle": "含柱状图验证" },
+    { "type": "heading", "text": "图表示例", "level": 1 },
+    { "type": "paragraph", "text": "本页包含一张柱状图，用于验证图表渲染与嵌入。" },
+    { "type": "diagram", "ref": "chart01", "layout": "fullwidth", "caption": "季度数据对比" }
+  ],
+  "desc": [
+    {
+      "id": "chart01",
+      "domain": "general",
+      "chartType": "chart",
+      "input": { "chartType": "bar", "labels": ["Q1", "Q2", "Q3", "Q4"], "values": [120, 190, 150, 220] },
+      "caption": "季度数据对比"
+    }
+  ]
+}

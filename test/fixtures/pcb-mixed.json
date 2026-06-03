@@ -1,0 +1,58 @@
+{
+  "context": "PCB技术原理调研报告",
+  "struct": [
+    { "type": "cover", "title": "PCB技术原理调研报告", "subtitle": "从基材到高密度互连的技术演进" },
+    { "type": "heading", "text": "一、PCB制造流程", "level": 1 },
+    { "type": "paragraph", "text": "PCB制造主要包括以下步骤：基材准备、蚀刻、层压、钻孔、电镀、测试。" },
+    { "type": "diagram", "ref": "fig_flow", "layout": "fullwidth", "caption": "PCB制造流程" },
+    { "type": "heading", "text": "二、系统架构", "level": 1 },
+    { "type": "paragraph", "text": "PCB产业链涵盖上游材料、中游制造和下游应用三大环节。" },
+    { "type": "diagram", "ref": "fig_arch", "layout": "fullwidth", "caption": "PCB产业链架构" },
+    { "type": "heading", "text": "三、信号完整性分析", "level": 1 },
+    { "type": "paragraph", "text": "高速信号传输中的衰减模型如下：" },
+    { "type": "diagram", "ref": "fig_formula", "layout": "inline", "caption": "传输线损耗公式" },
+    { "type": "heading", "text": "四、电路示例", "level": 1 },
+    { "type": "paragraph", "text": "典型的RC滤波电路用于信号调理：" },
+    { "type": "diagram", "ref": "fig_circuit", "layout": "halfwidth", "caption": "RC滤波电路" },
+    { "type": "heading", "text": "五、企业对比", "level": 1 },
+    { "type": "paragraph", "text": "国内主要PCB企业的市场份额对比：" },
+    { "type": "diagram", "ref": "fig_chart", "layout": "fullwidth", "caption": "市场份额对比" }
+  ],
+  "desc": [
+    {
+      "id": "fig_flow",
+      "domain": "cs",
+      "chartType": "flowchart",
+      "input": { "dsl": "flowchart LR\nA[基材准备] --> B[蚀刻] --> C[层压] --> D[钻孔] --> E[电镀] --> F[测试]" },
+      "caption": "PCB制造流程"
+    },
+    {
+      "id": "fig_arch",
+      "domain": "cs",
+      "chartType": "architecture",
+      "input": { "dsl": "graph TD\nA[上游材料] --> B[CCL覆铜板] --> C[PCB制造] --> D[下游应用]" },
+      "caption": "PCB产业链架构"
+    },
+    {
+      "id": "fig_formula",
+      "domain": "math",
+      "chartType": "formula",
+      "input": { "latex": "\\alpha(f) = \\alpha_0 \\sqrt{f} + \\alpha_{diel} f + \\frac{\\alpha_{rad}}{R}" },
+      "caption": "传输线损耗公式"
+    },
+    {
+      "id": "fig_circuit",
+      "domain": "physics",
+      "chartType": "circuit",
+      "input": { "circuitType": "basic" },
+      "caption": "RC滤波电路"
+    },
+    {
+      "id": "fig_chart",
+      "domain": "general",
+      "chartType": "chart",
+      "input": { "chartType": "bar", "labels": ["鹏鼎","东山","深南","沪电"], "values": [25, 20, 18, 15] },
+      "caption": "市场份额对比"
+    }
+  ]
+}

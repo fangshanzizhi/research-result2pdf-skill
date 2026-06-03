@@ -6,10 +6,18 @@ const fs = require('fs');
 const os = require('os');
 
 const PROJECT_ROOT = path.resolve(__dirname, '../..');
+const PDF_REPORTER_ROOT = path.resolve(__dirname, '../../..');
 const TEMP_DIR = path.join(PROJECT_ROOT, 'temp');
 const DOCS_DIR = path.join(PROJECT_ROOT, 'docs');
 const OUTPUT_DIR = path.join(PROJECT_ROOT, 'output');
 const RENDERERS_PY_DIR = path.join(PROJECT_ROOT, 'src/renderers/py');
+
+// 沙盒路径（项目级隔离环境）
+const SANDBOX_DIR = path.join(PDF_REPORTER_ROOT, '.pdf-reporter');
+const SANDBOX_VENV = path.join(SANDBOX_DIR, 'venv');
+const SANDBOX_NODE_MODULES = path.join(SANDBOX_DIR, 'node_modules');
+const SANDBOX_BIN = path.join(SANDBOX_DIR, 'bin');
+const SANDBOX_STATE = path.join(SANDBOX_DIR, 'state.json');
 
 function ensureDir(dir) {
   if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
@@ -42,6 +50,7 @@ function cleanupTemp() {
 }
 
 module.exports = {
-  PROJECT_ROOT, TEMP_DIR, DOCS_DIR, OUTPUT_DIR, RENDERERS_PY_DIR,
+  PROJECT_ROOT, PDF_REPORTER_ROOT, TEMP_DIR, DOCS_DIR, OUTPUT_DIR, RENDERERS_PY_DIR,
+  SANDBOX_DIR, SANDBOX_VENV, SANDBOX_NODE_MODULES, SANDBOX_BIN, SANDBOX_STATE,
   ensureDir, makeTempPath, resolveOutputPath, cleanupTemp
 };

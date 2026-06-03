@@ -17,6 +17,8 @@ def render(payload):
     import matplotlib.pyplot as plt
 
     inp = payload.get('input', {})
+    if isinstance(inp, str):
+        inp = {'latex': inp}
     latex = inp.get('latex', '') or inp.get('code', '') or inp.get('formula', '')
     if not latex:
         return {'success': False, 'error': 'LaTeX 公式不能为空'}

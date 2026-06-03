@@ -1,0 +1,46 @@
+{
+  "context": "复杂混排测试报告",
+  "struct": [
+    { "type": "cover", "title": "复杂混排测试报告", "subtitle": "多元素组合验证" },
+    { "type": "pagebreak" },
+    { "type": "heading", "text": "第一章：概述", "level": 1 },
+    { "type": "summary", "text": "本报告用于验证 cover、heading、paragraph、bullet、summary、table、pagebreak、diagram 等多种元素的混排能力。" },
+    { "type": "paragraph", "text": "正文段落支持 <strong>加粗文字</strong> 的渲染测试。" },
+    { "type": "bullet", "text": "要点 A：验证 bullet 列表" },
+    { "type": "bullet", "text": "要点 B：验证多层级混排" },
+    { "type": "heading", "text": "1.1 数据表格", "level": 2 },
+    { "type": "table", "data": [["项目", "数值", "占比"], ["收入", "1000", "50%"], ["成本", "600", "30%"], ["利润", "400", "20%"]] },
+    { "type": "pagebreak" },
+    { "type": "heading", "text": "第二章：图表展示", "level": 1 },
+    { "type": "paragraph", "text": "以下展示流程图与柱状图。" },
+    { "type": "diagram", "ref": "fig_flow", "layout": "fullwidth", "caption": "工作流程" },
+    { "type": "diagram", "ref": "fig_bar", "layout": "halfwidth", "caption": "数据对比" },
+    { "type": "pagebreak" },
+    { "type": "heading", "text": "第三章：公式", "level": 1 },
+    { "type": "paragraph", "text": "以下展示 LaTeX 公式。" },
+    { "type": "diagram", "ref": "fig_formula", "layout": "inline", "caption": "质能方程" }
+  ],
+  "desc": [
+    {
+      "id": "fig_flow",
+      "domain": "cs",
+      "chartType": "flowchart",
+      "input": { "dsl": "flowchart LR\nA[输入] --> B[处理] --> C[输出]" },
+      "caption": "工作流程"
+    },
+    {
+      "id": "fig_bar",
+      "domain": "general",
+      "chartType": "chart",
+      "input": { "chartType": "bar", "labels": ["A", "B", "C"], "values": [10, 20, 15] },
+      "caption": "数据对比"
+    },
+    {
+      "id": "fig_formula",
+      "domain": "math",
+      "chartType": "formula",
+      "input": { "latex": "E = mc^2" },
+      "caption": "质能方程"
+    }
+  ]
+}

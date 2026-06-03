@@ -134,6 +134,7 @@ function suggestLayout(domain, type) {
     // 分子/电路 → 半栏
     'chemistry.molecule': 'halfwidth',
     'chip.circuit': 'halfwidth',
+    'physics.circuit': 'halfwidth',
     'chip.timing': 'fullwidth',
 
     // 物理/数学大图

@@ -81,7 +81,23 @@ function findPython() {
 
 let _cachedPython = null;
 
+/**
+ * 获取沙盒 Python 路径（如果已初始化）
+ */
+function getSandboxPython() {
+  const isWin = process.platform === 'win32';
+  const venvDir = path.join(process.cwd(), '.pdf-reporter', 'venv');
+  const pythonPath = path.join(venvDir, isWin ? 'Scripts' : 'bin', isWin ? 'python.exe' : 'python3');
+  if (fs.existsSync(pythonPath)) return pythonPath;
+  return null;
+}
+
 function getPython() {
+  // 每次先查沙盒（沙盒可能动态创建）
+  const sandboxPy = getSandboxPython();
+  if (sandboxPy) return sandboxPy;
+
+  // 回退到缓存的系统 Python
   if (!_cachedPython) {
     _cachedPython = findPython();
   }
@@ -210,20 +226,12 @@ async function runPython(pythonPath, args, options = {}) {
 
 /**
  * 执行单行 Python 命令并返回输出
+ * 复用 runPython（spawn 封装），避免 execSync 的命令注入风险
  */
 async function runPythonExpr(pythonPath, code, options = {}) {
-  const escaped = code.includes('"')
-    ? `"${pythonPath}" -c '${code.replace(/'/g, "'\\''")}'`
-    : `"${pythonPath}" -c "${code}"`;
-
-  return new Promise((resolve, reject) => {
-    execSync(escaped, {
-      encoding: 'utf-8',
-      timeout: options.timeout || 10000,
-      cwd: options.cwd,
-      env: { ...process.env, PYTHONIOENCODING: 'utf-8', ...options.env },
-    });
-    resolve();
+  return runPython(pythonPath, ['-c', code], {
+    ...options,
+    timeout: options.timeout || 10000,
   });
 }
 

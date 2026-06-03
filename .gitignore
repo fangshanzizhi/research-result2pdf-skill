@@ -18,6 +18,20 @@ __pycache__/
 reports/*.pdf
 output/
 temp/
+pdf/
+
+# 沙盒环境
+.pdf-reporter/
+
+# 临时调试脚本
+test-d2-debug.js
+test-d2-fix.js
+
+# 临时目录
+coverage/
+audit_report/
+dev_files/
+/src/
 
 # IDE
 .vscode/

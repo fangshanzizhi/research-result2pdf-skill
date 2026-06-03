@@ -12,6 +12,8 @@
 const { render, listSupported, listDomains, REGISTRY } = require('./core/engine');
 const { check, checkAll } = require('./core/dependency-check');
 const { cleanupTemp } = require('./utils/paths');
+const { isSandboxReady } = require('./core/sandbox');
+const { setupSandbox, installDependency, buildDependencyList } = require('./core/sandbox-installer');
 
 // 领域接口
 const chemistry = require('./domains/chemistry');
@@ -60,4 +62,10 @@ module.exports = {
 
   // 注册表（扩展用）
   REGISTRY,
+
+  // 沙盒依赖管理（新增）
+  requireDependencyList: buildDependencyList,
+  setupSandbox,
+  installDependency,
+  isSandboxReady,
 };

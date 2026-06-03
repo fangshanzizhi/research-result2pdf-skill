@@ -1,0 +1,17 @@
+{
+  "context": "容错测试报告",
+  "struct": [
+    { "type": "heading", "text": "容错测试", "level": 1 },
+    { "type": "diagram", "ref": "bad", "layout": "fullwidth", "caption": "应该失败的图表" },
+    { "type": "paragraph", "text": "后文段落，验证图表失败后 PDF 仍能继续生成。" }
+  ],
+  "desc": [
+    {
+      "id": "bad",
+      "domain": "general",
+      "chartType": "chart",
+      "input": {},
+      "caption": "无效图表"
+    }
+  ]
+}

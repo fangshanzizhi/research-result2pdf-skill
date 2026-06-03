@@ -1,0 +1,50 @@
+{
+  "name": "research-result2pdf-skill",
+  "version": "1.0.0",
+  "description": "PDF Reporter Skill - 自动PDF研究报告生成器。Agent 只需组装 {context, struct, desc}，Skill 自动渲染图表并组装为专业 A4 PDF",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --coverage",
+    "test:unit": "jest test/unit src/unit_test --coverage",
+    "test:integration": "jest test/integration --runInBand",
+    "setup": "node setup.js",
+    "setup:check": "node setup.js --check-only"
+  },
+  "keywords": [
+    "pdf",
+    "report",
+    "diagram",
+    "mermaid",
+    "latex",
+    "ai",
+    "research",
+    "chart"
+  ],
+  "author": "Kimi CLI Agent",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "dependencies": {},
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "coverage",
+    "collectCoverageFrom": [
+      "*.js",
+      "!jest.config.js",
+      "!coverage/**"
+    ],
+    "testMatch": [
+      "**/test/**/*.test.js",
+      "**/src/unit_test/**/*.test.js"
+    ],
+    "modulePathIgnorePatterns": [
+      "tech-diagram-kit",
+      "node_modules"
+    ],
+    "transform": {}
+  }
+}

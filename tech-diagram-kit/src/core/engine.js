@@ -48,7 +48,8 @@ const REGISTRY = {
   'chip.architecture':      { renderer: 'd2',          fallback: 'mermaid',   lang: 'node',   formats: ['svg','png'] },
   'chip.timing':            { renderer: 'mpl_diagram', fallback: null,        lang: 'python', formats: ['png','pdf'] },
   'chip.noc':               { renderer: 'graphviz',    fallback: 'mpl_diagram',lang: 'node',   formats: ['png','svg'] },
-  'chip.circuit':           { renderer: 'schemdraw',   fallback: null,        lang: 'python', formats: ['svg','pdf'] },
+  'chip.circuit':           { renderer: 'schemdraw',   fallback: null,        lang: 'python', formats: ['svg','pdf','png'] },
+  'physics.circuit':        { renderer: 'schemdraw',   fallback: null,        lang: 'python', formats: ['svg','pdf','png'] },
   
   // 制造业
   'manufacturing.process':  { renderer: 'mermaid',     fallback: 'd2',        lang: 'node',   formats: ['svg','png'] },
@@ -60,6 +61,11 @@ const REGISTRY = {
   'general.sankey':         { renderer: 'mpl_diagram', fallback: 'd2',        lang: 'python', formats: ['png','svg'] },
   'general.chart':          { renderer: 'mpl_diagram', fallback: 'vegalite',  lang: 'python', formats: ['png','svg'] },
   'general.table':          { renderer: 'mpl_diagram', fallback: null,        lang: 'python', formats: ['png','pdf'] },
+  'general.flowchart':      { renderer: 'mermaid',     fallback: 'd2',        lang: 'node',   formats: ['svg','png'] },
+  'general.architecture':   { renderer: 'd2',          fallback: 'mermaid',   lang: 'node',   formats: ['svg','png'] },
+  'general.formula':        { renderer: 'mathjax',     fallback: 'latex_math',lang: 'node',   formats: ['svg','png'] },
+  'general.network':        { renderer: 'graphviz',    fallback: 'd2',        lang: 'node',   formats: ['png','svg'] },
+  'general.process':        { renderer: 'mermaid',     fallback: 'd2',        lang: 'node',   formats: ['svg','png'] },
 };
 
 // ========================================================================

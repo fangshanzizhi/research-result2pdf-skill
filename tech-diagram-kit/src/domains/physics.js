@@ -61,6 +61,27 @@ class Physics {
       dpi: options.dpi || 200,
     });
   }
+
+  /**
+   * 绘制电路图
+   * @param {object} data
+   * @param {string} data.circuitType - 'basic' | 'opamp' | 'logic' | 'custom'
+   * @param {Array<{type:string, label?:string}>} data.elements - custom 模式下的元件列表
+   * @param {object} options
+   */
+  async circuit(data = {}, options = {}) {
+    return render({
+      domain: 'physics',
+      type: 'circuit',
+      input: {
+        circuitType: data.circuitType || 'basic',
+        elements: data.elements,
+      },
+      format: options.format || 'svg',
+      outputPath: options.outputPath,
+      dpi: options.dpi || 200,
+    });
+  }
 }
 
 module.exports = new Physics();

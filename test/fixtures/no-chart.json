@@ -1,0 +1,11 @@
+{
+  "context": "最小测试报告",
+  "struct": [
+    { "type": "cover", "title": "最小测试报告", "subtitle": "单元测试 fixtures" },
+    { "type": "heading", "text": "概述", "level": 1 },
+    { "type": "paragraph", "text": "这是一段测试文本，用于验证无图表场景下的 PDF 生成能力。" },
+    { "type": "bullet", "text": "要点一：验证基本排版" },
+    { "type": "bullet", "text": "要点二：验证中文显示" }
+  ],
+  "desc": []
+}

@@ -1,14 +1,21 @@
 /**
- * D2 渲染器
+ * D2 渲染器（沙盒优先）
  */
 const { execSync } = require('child_process');
 const fs = require('fs');
 const { makeTempPath } = require('../../utils/paths');
+const { findInSandbox } = require('../../core/sandbox');
+
+function getD2Exe() {
+  const sandbox = findInSandbox('d2');
+  if (sandbox) return sandbox;
+  return 'd2';
+}
 
 function render(payload) {
   const { input, format = 'svg', outputPath } = payload;
   const code = input.code || input.dsl || input;
-  if (!code) throw new Error('D2 输入不能为空');
+  if (!code || typeof code !== 'string') throw new Error('D2 输入必须是字符串');
 
   const tmpD2 = makeTempPath('.d2');
   const isSvg = format === 'svg';
@@ -17,7 +24,8 @@ function render(payload) {
   fs.writeFileSync(tmpD2, code, 'utf-8');
 
   const fmt = isSvg ? 'svg' : 'png';
-  execSync(`d2 "${tmpD2}" "${outPath}" --layout elk --theme 200`, {
+  const d2Exe = getD2Exe();
+  execSync(`"${d2Exe}" "${tmpD2}" "${outPath}" --layout elk --theme 200`, {
     stdio: 'pipe', timeout: 15000
   });
 
